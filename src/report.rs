@@ -1,5 +1,4 @@
 use std::fs;
-use std::vec::Vec;
 use std::{io, path::Path};
 
 use crate::person::Person;
@@ -14,7 +13,7 @@ will be replaced with data from `person_chain`.
 * `output` - A path to text file where result will be stored.
 */
 pub fn make_report(
-    person_chain: &Vec<Person>,
+    person_chain: &[Person],
     content_template: &Path,
     reference_template: &Path,
     output: &Path,
@@ -37,7 +36,7 @@ pub fn make_report(
     for person in &person_chain[1..] {
         // We will save reference report for that particular person here.
         // Fill gaps of commander.
-        let mut temp_reference_data: String = replace(&person, reference_data.clone());
+        let mut temp_reference_data: String = replace(person, reference_data.clone());
 
         // Fill gaps of direct subordinate.
         temp_reference_data = replace_dsubordinate(dsubordinate, temp_reference_data);

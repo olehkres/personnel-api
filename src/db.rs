@@ -17,17 +17,13 @@ pub fn make_personchain(id: u32, db_path: &Path) -> Result<Vec<Person>> {
     let mut personchain: Vec<Person> = Vec::new();
     personchain.push(get_person_by_id(id, &conn)?);
 
-    loop {
-        // Get person suprime and add it to chain until we get it up to the end.
-        match get_person_sup_by_id(
-            personchain.last().unwrap()["person_id"]
-                .parse::<u32>()
-                .unwrap(),
-            &conn,
-        ) {
-            Ok(person) => personchain.push(person),
-            Err(_) => break,
-        };
+    while let Ok(person) = get_person_sup_by_id(
+        personchain.last().unwrap()["person_id"]
+            .parse::<u32>()
+            .unwrap(),
+        &conn,
+    ) {
+        personchain.push(person);
     }
 
     Ok(personchain)
@@ -55,7 +51,7 @@ where
 
     let mut rows = stmt.query(params)?;
 
-    while let Some(row) = rows.next()? {
+    if let Some(row) = rows.next()? {
         let mut person = HashMap::<String, String>::new();
 
         for column in &column_names {
@@ -109,4 +105,43 @@ This function will get and return person by id.
  */
 fn get_person_by_id(id: u32, conn: &Connection) -> Result<Person> {
     make_onerow_request(conn, "SELECT * FROM personnel WHERE person_id = ?", [id])
+}
+
+/**
+This function will get and return every person from database.
+
+#Arguments
+ * `db_path` - path to SQLite database with personnel schema.
+ */
+pub fn get_personnel(db_path: &Path) -> Result<Vec<Person>> {
+    let mut personnel: Vec<Person> = Vec::new();
+
+    let conn = Connection::open(db_path)?;
+
+    let mut stmt = conn.prepare("SELECT * FROM personnel")?;
+    let column_names: Vec<String> = stmt.column_names().into_iter().map(String::from).collect();
+
+    let person_iter = stmt.query_map([], |row| {
+        let mut person = Person::new();
+
+        for column in &column_names {
+            let cell = match row.get_ref_unwrap(column.as_str()) {
+                ValueRef::Integer(i) => i.to_string(),
+                ValueRef::Real(f) => f.to_string(),
+                ValueRef::Text(t) => String::from_utf8(t.to_vec()).unwrap(),
+                ValueRef::Blob(b) => String::from_utf8(b.to_vec()).unwrap(),
+                ValueRef::Null => String::new(),
+            };
+
+            person.insert(column.clone(), cell);
+        }
+
+        Ok(person)
+    })?;
+
+    for person in person_iter {
+        personnel.push(person.unwrap());
+    }
+
+    Ok(personnel)
 }
