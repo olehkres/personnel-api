@@ -4,13 +4,13 @@ use std::{io, path::Path};
 use crate::person::Person;
 
 /**
-This function will make report from person list and document.
+ This function will make report from person list and document.
 
-# Arguments
-* `person_chain` - A vector filled with personnel from lowest to higest commander.
-* `content_template` - A path to text file with variables that
-will be replaced with data from `person_chain`.
-* `output` - A path to text file where result will be stored.
+ # Arguments
+ * `person_chain` - A vector filled with personnel from lowest to higest commander.
+ * `content_template` - A path to text file with variables that
+ will be replaced with data from `person_chain`.
+ * `output` - A path to text file where result will be stored.
 */
 pub fn make_report(
     person_chain: &[Person],

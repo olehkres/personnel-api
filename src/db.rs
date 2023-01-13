@@ -10,15 +10,15 @@ highest commander.
 # Arguments
 * `id` - id in database corresponding to person.
 * `db_path` - path to SQLite database with personnel schema.
- */
-pub fn make_personchain(id: u32, db_path: &Path) -> Result<Vec<Person>> {
+*/
+pub fn make_personchain(id: &u32, db_path: &Path) -> Result<Vec<Person>> {
     let conn = Connection::open(db_path)?;
 
     let mut personchain: Vec<Person> = Vec::new();
     personchain.push(get_person_by_id(id, &conn)?);
 
     while let Ok(person) = get_person_sup_by_id(
-        personchain.last().unwrap()["person_id"]
+        &personchain.last().unwrap()["person_id"]
             .parse::<u32>()
             .unwrap(),
         &conn,
@@ -36,8 +36,8 @@ This function will get one row from database.
 * `conn` - SQLite database connection defined in rusqlite library.
 * `request` - string slice wich is valid SQL request.
 * `params` - array of params for request.
- */
-fn make_onerow_request<P>(
+*/
+pub fn make_onerow_request<P>(
     conn: &Connection,
     request: &str,
     params: P,
@@ -76,11 +76,11 @@ where
 /**
 This function will get and return commander of person by id.
 
-#Arguments
- * `id` - id in database corespoding to person of wich commander we want to know.
- * `conn` - SQLite database connection defined in rusqlite library.
- */
-fn get_person_sup_by_id(id: u32, conn: &Connection) -> Result<Person> {
+# Arguments
+* `id` - id in database corespoding to person of wich commander we want to know.
+* `conn` - SQLite database connection defined in rusqlite library.
+*/
+fn get_person_sup_by_id(id: &u32, conn: &Connection) -> Result<Person> {
     make_onerow_request(
         conn,
         "SELECT * \
@@ -99,20 +99,20 @@ fn get_person_sup_by_id(id: u32, conn: &Connection) -> Result<Person> {
 /**
 This function will get and return person by id.
 
-#Arguments
- * `id` - id in database corespoding to person.
- * `conn` - SQLite database connection defined in rusqlite library.
- */
-fn get_person_by_id(id: u32, conn: &Connection) -> Result<Person> {
+# Arguments
+* `id` - id in database corespoding to person.
+* `conn` - SQLite database connection defined in rusqlite library.
+*/
+fn get_person_by_id(id: &u32, conn: &Connection) -> Result<Person> {
     make_onerow_request(conn, "SELECT * FROM personnel WHERE person_id = ?", [id])
 }
 
 /**
 This function will get and return every person from database.
 
-#Arguments
- * `db_path` - path to SQLite database with personnel schema.
- */
+# Arguments
+* `db_path` - path to SQLite database with personnel schema.
+*/
 pub fn get_personnel(db_path: &Path) -> Result<Vec<Person>> {
     let mut personnel: Vec<Person> = Vec::new();
 

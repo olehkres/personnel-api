@@ -1,6 +1,6 @@
 [package]
 name = "personnel-api"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -8,3 +8,5 @@ edition = "2021"
 [dependencies]
 # SQLite wrapper. 
 rusqlite = { version = "0.28.0", features = ["bundled"] }
+# Xml
+minidom = "0.15.0"
