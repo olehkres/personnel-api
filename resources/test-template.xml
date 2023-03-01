@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root xmlns="pm">
+    <params>
+        <param type="str" name="id" />
+    </params>
+
+    <block>
+        <sql>
+            <request name="person" request="select * from person where id={id}" />
+        </sql>
+        <html>
+            <![CDATA[ 
+                <!DOCTYPE html>
+                <html>
+                <body>
+                    {person.name}
+                </body>
+                </html>
+            ]]>
+        </html>
+    </block>
+</root>
