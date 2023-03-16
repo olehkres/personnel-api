@@ -7,7 +7,7 @@ mod utils;
 use utils::XmlVariables;
 
 mod error;
-use error::PersonnelError;
+pub use error::PersonnelError;
 
 #[cfg(test)]
 mod tests;
